@@ -1,0 +1,11 @@
+---
+# roles/create-ami/tasks/main.yml
+- name: Create AMI
+  ec2_ami:
+    region: "{{ region }}"
+    instance_id: "{{ ec2.instance_ids[0] }}"
+    name: "{{ asg_name }}-{{ ansible_date_time.iso8601 | regex_replace('[^a-zA-Z0-9]', '-') }}"
+    wait: yes
+    wait_timeout: 1200
+    state: present
+  register: ami

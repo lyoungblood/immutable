@@ -1,0 +1,17 @@
+---
+# roles/create-launch-config/tasks/main.yml
+
+- name: Create Launch Configuration
+  ec2_lc:
+    region: "{{ region }}"
+    name: "{{ asg_name }}-{{ ansible_date_time.iso8601 | regex_replace('[^a-zA-Z0-9]', '-') }}"
+    image_id: "{{ ami.image_id }}"
+    key_name: "{{ keypair }}"
+    instance_type: "{{ instance_type }}"
+    instance_profile_name: "{{ iam_profile }}"
+    security_groups: "{{ security_groups }}"
+    volumes: "{{ volumes }}"
+    instance_monitoring: yes
+  register: lc_result
+
+- debug: var=lc_result

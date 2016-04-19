@@ -1,0 +1,18 @@
+---
+# group_vars/all.yml
+
+region: us-east-1
+zone: us-east-1a # zone that the master AMI will be configured in
+keypair: immutable
+security_groups: ['default']
+instance_type: t2.micro
+# specify group_name on the command line with -e group_name=foo
+# group_name: test
+instances_min: 1 # minimum number of instances in the auto scaling group
+instances_max: 3 # maximum number of instances in the auto scaling group
+iam_profile: "noaccess"
+volumes:
+  - device_name: /dev/sda1
+    device_type: gp2
+    volume_size: 8 # size of the root disk
+    delete_on_termination: true

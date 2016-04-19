@@ -1,0 +1,37 @@
+---
+# deployworkstation.yml
+  - hosts: localhost
+    connection: local
+    gather_facts: no
+    roles:
+      - role: launch
+        name: "{{ group_name }}amibuild"
+
+  - hosts: "{{ group_name }}amibuild"
+    become: True
+    become_user: root
+    become_method: sudo
+    roles:
+      - yaegashi.blockinfile
+      - workstation
+
+  - hosts: localhost
+    connection: local
+    gather_facts: yes
+    roles:
+      - { role: create-ami, asg_name: "{{ group_name }}" }
+      - { role: create-launch-config, asg_name: "{{ group_name }}" }
+      - { role: auto-scaling, asg_name: "{{ group_name }}", instances_max: 1 }
+
+  - hosts: localhost
+    connection: local
+    gather_facts: no
+    roles:
+      - { role: delete-old-launch-configurations, asg_name: "{{ group_name }}" }
+      - { role: delete-old-amis, asg_name: "{{ group_name }}" }
+
+  - hosts: "{{ group_name }}amibuild"
+    connection: local
+    gather_facts: no
+    roles:
+      - terminate
